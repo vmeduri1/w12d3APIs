@@ -12,10 +12,26 @@ router.get("/tweets", asyncHandler(async (req, res) => {
     res.json({tweets});
 }));
 
-router.get('/:id(\\d+)', asyncHandler(async (req, res) => {
-    const tweetsId = await Tweet.findByPk(req.params.id)
-    const id = parseInt(tweetsId)
-    res.json({id})
+router.get('/tweets/:id(\\d+)', asyncHandler(async (req, res, next) => {
+    const tweet = await Tweet.findByPk(req.params.id)
+        // const id = parseInt(tweetsId)
+    if (tweet) {
+        res.json({tweet})
+    } else {
+        next(tweetNotFoundError(req.params.id));
+    }
+
+}))
+
+const tweetNotFoundError = function (tweetId) {
+    const error = new Error('Tweet of given ID could not be found.')
+    error.title = 'Tweet not found.';
+    error.status = 404;
+    return error;
+}
+
+router.post('/tweets', asyncHandler(async (req, res) => {
+
 }))
 
 module.exports = router
