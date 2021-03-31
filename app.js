@@ -9,7 +9,8 @@ app.use(morgan("dev"));
 
 app.use(express.json());
 
-
+app.use(indexRouter);
+app.use(tweetsRouter)
 
 // Catch unhandled requests and forward to error handler.
 app.use((req, res, next) => {
