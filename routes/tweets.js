@@ -3,9 +3,7 @@ const router = express.Router();
 const db = require("../db/models");
 const { Tweet } = db;
 const { check, validationResult } = require('express-validator');
-
-const asyncHandler = handler => (req, res, next) => handler(req, res, next).catch(next);
-
+const { asyncHandler, handleValidationErrors } = require('../utils');
 
 router.get("/tweets", asyncHandler(async (req, res) => {
     // res.json({ message: "test tweets index" });
@@ -37,20 +35,7 @@ const tweetValidators = [
       .withMessage('Tweet must not be more than 255 characters long')
     ]
 
-const handleValidationErrors = (req, res, next) => {
-    const validationErrors = validationResult(req);
 
-    if (!validationErrors.isEmpty()) {
-        const errors = validationErrors.array().map((error) => error.msg);
-
-        const err = Error("Bad request.");
-        err.errors = errors;
-        err.status = 400;
-        err.title = "Bad request.";
-        return next(err);
-    }
-    next();
-};
 
 router.post('/tweets', tweetValidators, handleValidationErrors, asyncHandler(async (req, res) => {
       const { message } = req.body
