@@ -66,13 +66,26 @@ router.post('/tweets', tweetValidators, handleValidationErrors, asyncHandler(asy
 }))
 
 router.put('/tweets/:id(\\d+)', tweetValidators, handleValidationErrors, asyncHandler(async (req, res, next) => {
-    const tweetId = parseInt(req.params.id);
+    const tweetId = parseInt(req.params.id, 10);
     const tweet = await Tweet.findByPk(tweetId);
     if (tweet) {
         await tweet.update({ message: req.body.message });
+        res.json({ tweet });
     } else {
         next(tweetNotFoundError(tweetId));
     }
+}))
+
+router.delete('/tweets/:id(\\d+)', asyncHandler(async(req, res, next) => {
+        const tweetId = parseInt(req.params.id, 10);
+        const tweet = await Tweet.findByPk(tweetId);
+
+        if(tweet) {
+            await tweet.destroy()
+            res.status(204).end()
+        } else {
+            next(tweetNotFoundError(tweetId))
+        }
 }))
 
 module.exports = router
