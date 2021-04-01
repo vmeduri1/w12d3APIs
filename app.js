@@ -27,6 +27,7 @@ app.use((err, req, res, next) => {
   const isProduction = environment === "production";
   res.json({
     title: err.title || "Server Error",
+    errors: err.errors,
     message: err.message,
     stack: isProduction ? null : err.stack,
   });
